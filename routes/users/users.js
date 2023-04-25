@@ -1,10 +1,10 @@
 const express = require("express");
-// const {
-//   registerUser,
-//   loginUser,
-//   refreshUser,
-//   logoutUser,
-// } = require("../../models/auth/user");
+const {
+  registerUser,
+  loginUser,
+  refreshUser,
+  logoutUser,
+} = require("../../models/users/usersOperations");
 
 const {
   registerUsresSchema,
@@ -12,6 +12,7 @@ const {
   updateSubSchema,
   refreshTokenSchema,
 } = require("../../models/users/userSchema");
+const { valid } = require("joi");
 
 // const authenticate = require("../../middlewares/authMiddlewar");
 // const upload = require("../../middlewares/upload");
@@ -21,23 +22,17 @@ const router = express.Router();
 router.post("/registerUser", async (req, res, next) => {
   try {
     const { error } = registerUsresSchema.validate(req.body);
-    if (error) {
+      if (error) {
       res.status(400).json({ message: `${error}` });
     } else {
-      const newUser = await registerUser(req);
+        const newUser = await registerUser(req);
       res.status(201).json({
-        user: {
-        nickName: newUser.nickName,
-        subscription: newUser.subscription,
-        },
+        ...newUser
       });
     }
   } catch (error) {
-    if (error.code === 11000) {
-      res.status(409).json({ message: "Email in use" });
-    } else {
       next(error);
-    }
+    
   }
 });
 
@@ -78,18 +73,18 @@ router.post("/login", async (req, res, next) => {
 //   }
 // });
 
-router.post("/logout", authenticate, async (req, res, next) => {
-  try {
-    const user = await logoutUser(req);
-    if (user==="Not found") {
-    res.status(404).json({ message: user });
-    } else {
-    res.status(204).json({ message: "Logout." });
-    }
-  } catch (error) {
-    next(error);
-  }
-});
+// router.post("/logout", authenticate, async (req, res, next) => {
+//   try {
+//     const user = await logoutUser(req);
+//     if (user==="Not found") {
+//     res.status(404).json({ message: user });
+//     } else {
+//     res.status(204).json({ message: "Logout." });
+//     }
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 
 // router.patch("/", authenticate, async (req, res, next) => {
 //   try {

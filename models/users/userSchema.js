@@ -15,8 +15,8 @@ const userSchema = new Schema({
     default: "123456",
   },
   userInformation: {
-    userName: String,
-    dateBirth: String,
+    userName: {type: String},
+    dateBirth: {type: String},
     healthyGroup: { type: String, enum: ["A", "B", "C"] },
     class: { type: String, default: "" },
   },
@@ -39,7 +39,7 @@ userSchema.post("save", (error, data, next) => {
   next();
 });
 
-const User = model("User", userSchema);
+const Users = model("User", userSchema);
 
 const registerUsresSchema = Joi.object({
   nickName: Joi.string()
@@ -71,7 +71,7 @@ const refreshTokenSchema = Joi.object({
 });
 
 module.exports = {
-  User,
+  Users,
   registerUsresSchema,
   loginSchema,
   updateSubSchema,

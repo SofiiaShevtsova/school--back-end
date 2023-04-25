@@ -1,4 +1,4 @@
-const { User } = require("./userSchema");
+const { Users } = require("./userSchema");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
@@ -9,16 +9,12 @@ dotenv.config();
 const { PORT = 3000, REFRESH_SECRET_KEY, BASE_URL } = process.env;
 
 const registerUser = async (req) => {
-    const { name, email, password, subscription } = req.body;
-    const salt = await bcrypt.genSalt(10);
+  const { password } = req.body;
+  const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(password, salt);
 
-    await User.create({
-        name,
-        email,
-        subscription,
-        password: hashPassword,
-    })
+    await Users.create({ ...req.body, password: hashPassword });
+    return { ...req.body, password: hashPassword}
 };
 
 const loginUser = async (req) => {
@@ -75,8 +71,11 @@ const refreshUser = async (req) => {
 
 const logoutUser = async (req, res) => {
   const { _id } = req.user;
-  const user = await User.findByIdAndUpdate(_id, { refreshToken: "", accessToken: "" });
-  return user||"Not found"
+  const user = await User.findByIdAndUpdate(_id, {
+    refreshToken: "",
+    accessToken: "",
+  });
+  return user || "Not found";
 };
 
 const updateSubUser = async (req, res) => {
@@ -95,11 +94,10 @@ const updateSubUser = async (req, res) => {
   return user;
 };
 
-
 module.exports = {
   registerUser,
   loginUser,
   refreshUser,
   logoutUser,
-  updateSubUser
-}
+  updateSubUser,
+};
