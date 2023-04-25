@@ -19,6 +19,7 @@ const userSchema = new Schema({
     dateBirth: {type: String},
     healthyGroup: { type: String, enum: ["A", "B", "C"] },
     class: { type: String, default: "" },
+    gender:{type: String, enum: ["male", "female"]},
   },
   subscription: {
     type: String,
