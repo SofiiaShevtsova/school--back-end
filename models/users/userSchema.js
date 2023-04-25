@@ -19,6 +19,7 @@ const userSchema = new Schema({
     dateBirth: {type: String},
     healthyGroup: { type: String, enum: ["A", "B", "C"] },
     class: { type: String, default: "" },
+    gender:{type: String, enum: ["male", "female"]},
   },
   subscription: {
     type: String,
@@ -54,16 +55,17 @@ const registerUsresSchema = Joi.object({
     dateBirth: Joi.string().required(),
     healthyGroup: Joi.string().default("A"),
     class: Joi.string().default(""),
+    gender: Joi.string().required(),
   }),
 });
 
 const loginSchema = Joi.object({
   nickName: Joi.string().required(),
-  password: Joi.string().min(7).max(20).required(),
+  password: Joi.string().min(6).max(20).required(),
 });
 
-const updateSubSchema = Joi.object({
-  subscription: Joi.string().valid("admin", "teacher", "student", "parent").required(),
+const updatePasswordSchema = Joi.object({
+  password: Joi.string().min(6).max(20).required(),
 });
 
 const refreshTokenSchema = Joi.object({
@@ -74,6 +76,6 @@ module.exports = {
   Users,
   registerUsresSchema,
   loginSchema,
-  updateSubSchema,
+  updatePasswordSchema,
   refreshTokenSchema,
 };
