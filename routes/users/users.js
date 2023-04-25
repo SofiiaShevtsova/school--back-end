@@ -6,13 +6,12 @@ const express = require("express");
 //   logoutUser,
 // } = require("../../models/auth/user");
 
-// const {
-//   registerSchema,
-//   loginSchema,
-//   updateSubSchema,
-//   verifyEmailSchema,
-//   refreshTokenSchema,
-// } = require("../../models/auth/userSchema");
+const {
+  registerUsresSchema,
+  loginSchema,
+  updateSubSchema,
+  refreshTokenSchema,
+} = require("../../models/users/userSchema");
 
 // const authenticate = require("../../middlewares/authMiddlewar");
 // const upload = require("../../middlewares/upload");
@@ -21,15 +20,15 @@ const router = express.Router();
 
 router.post("/registerUser", async (req, res, next) => {
   try {
-    const { error } = registerSchema.validate(req.body);
+    const { error } = registerUsresSchema.validate(req.body);
     if (error) {
       res.status(400).json({ message: `${error}` });
     } else {
       const newUser = await registerUser(req);
       res.status(201).json({
         user: {
-          email: newUser.email,
-          subscription: newUser.subscription || "starter",
+        nickName: newUser.nickName,
+        subscription: newUser.subscription,
         },
       });
     }
@@ -56,28 +55,28 @@ router.post("/login", async (req, res, next) => {
   }
 });
 
-router.get("/current", authenticate, (req, res, next) => {
-  try {
-    const { subscription, email } = req.user;
-    res.json({ subscription, email });
-  } catch (error) {
-    next(error);
-  }
-});
+// router.get("/current", authenticate, (req, res, next) => {
+//   try {
+//     const { subscription, email } = req.user;
+//     res.json({ subscription, email });
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 
-router.post("/refresh", async (req, res, next) => {
-  try {
-    const { error } = refreshTokenSchema.validate(req.body);
-    if (error) {
-      res.status(400).json({ message: `${error}` });
-    } else {
-      const user = await refreshUser(req);
-      res.json(user);
-    }
-  } catch (error) {
-    next(error);
-  }
-});
+// router.post("/refresh", async (req, res, next) => {
+//   try {
+//     const { error } = refreshTokenSchema.validate(req.body);
+//     if (error) {
+//       res.status(400).json({ message: `${error}` });
+//     } else {
+//       const user = await refreshUser(req);
+//       res.json(user);
+//     }
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 
 router.post("/logout", authenticate, async (req, res, next) => {
   try {
@@ -92,18 +91,18 @@ router.post("/logout", authenticate, async (req, res, next) => {
   }
 });
 
-router.patch("/", authenticate, async (req, res, next) => {
-  try {
-    const { error } = updateSubSchema.validate(req.body);
-    if (error) {
-      res.status(400).json({ message: "Missing field subscription." });
-    } else {
-      const updateUser = await updateSubUser(req, res);
-      res.json(updateUser);
-    }
-  } catch (error) {
-    next(error);
-  }
-});
+// router.patch("/", authenticate, async (req, res, next) => {
+//   try {
+//     const { error } = updateSubSchema.validate(req.body);
+//     if (error) {
+//       res.status(400).json({ message: "Missing field subscription." });
+//     } else {
+//       const updateUser = await updateSubUser(req, res);
+//       res.json(updateUser);
+//     }
+//   } catch (error) {
+//     next(error);
+//   }
+// });
 
 module.exports = router;

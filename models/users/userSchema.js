@@ -4,23 +4,25 @@ const Joi = require("joi");
 const { Schema, model } = mongoose;
 
 const userSchema = new Schema({
-  name: {
+  nickName: {
     type: String,
-    required: [true, "Set name for contact"],
+    required: [true, "Set name for user"],
+    unique: true,
   },
   password: {
     type: String,
     required: [true, "Set password for user"],
+    default: "123456",
   },
-  email: {
-    type: String,
-    required: [true, "Email is required"],
-    unique: true,
+  userInformation: {
+    userName: String,
+    dateBirth: String,
+    healthyGroup: { type: String, enum: ["A", "B", "C"] },
+    class: { type: String, default: "" },
   },
   subscription: {
     type: String,
-    enum: ["starter", "pro", "business"],
-    default: "starter",
+    enum: ["admin", "teacher", "student", "parent"],
   },
   accessToken: {
     type: String,
@@ -29,18 +31,6 @@ const userSchema = new Schema({
   refreshToken: {
     type: String,
     default: "",
-  },
-  avatarURL: {
-    type: String,
-    required: [true, "Is required"],
-  },
-  verify: {
-    type: Boolean,
-    default: false,
-  },
-  verificationToken: {
-    type: String,
-    required: [true, "Verify token is required"],
   },
 });
 
@@ -51,35 +41,29 @@ userSchema.post("save", (error, data, next) => {
 
 const User = model("User", userSchema);
 
-const registerSchema = Joi.object({
-  name: Joi.string()
-    .pattern(/^[a-z,A-Z,0-9, ,-]+$/)
-    .min(2)
-    .max(30)
+const registerUsresSchema = Joi.object({
+  nickName: Joi.string()
+    .pattern(/^[a-z,A-Z,0-9]+$/)
+    .min(6)
+    .max(10)
     .required(),
-  email: Joi.string()
-    .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
-    .required(),
-  password: Joi.string().min(7).max(20).required(),
-  subscription: Joi.string().default("starter"),
-  avatarURL: Joi.string(),
+  password: Joi.string().min(6).max(20).required(),
+  subscription: Joi.string().required(),
+  userInformation: Joi.object({
+    userName: Joi.string().required(),
+    dateBirth: Joi.string().required(),
+    healthyGroup: Joi.string().default("A"),
+    class: Joi.string().default(""),
+  }),
 });
 
 const loginSchema = Joi.object({
-  email: Joi.string()
-    .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
-    .required(),
+  nickName: Joi.string().required(),
   password: Joi.string().min(7).max(20).required(),
 });
 
 const updateSubSchema = Joi.object({
-  subscription: Joi.string().valid("starter", "pro", "business").required(),
-});
-
-const verifyEmailSchema = Joi.object({
-  email: Joi.string()
-    .email({ minDomainSegments: 2, tlds: { allow: ["com", "net"] } })
-    .required(),
+  subscription: Joi.string().valid("admin", "teacher", "student", "parent").required(),
 });
 
 const refreshTokenSchema = Joi.object({
@@ -88,9 +72,8 @@ const refreshTokenSchema = Joi.object({
 
 module.exports = {
   User,
-  registerSchema,
+  registerUsresSchema,
   loginSchema,
   updateSubSchema,
-  verifyEmailSchema,
   refreshTokenSchema,
 };
