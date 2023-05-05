@@ -14,13 +14,7 @@ const userSchema = new Schema({
     required: [true, "Set password for user"],
     default: "123456",
   },
-  userInformation: {
-    userName: {type: String},
-    dateBirth: {type: String},
-    healthyGroup: { type: String, enum: ["A", "B", "C"] },
-    class: { type: String, default: "" },
-    gender:{type: String, enum: ["male", "female"]},
-  },
+  userName: { type: String },
   subscription: {
     type: String,
     enum: ["admin", "teacher", "student", "parent"],
@@ -50,13 +44,7 @@ const registerUsresSchema = Joi.object({
     .required(),
   password: Joi.string().min(6).max(20).required(),
   subscription: Joi.string().required(),
-  userInformation: Joi.object({
-    userName: Joi.string().required(),
-    dateBirth: Joi.string().required(),
-    healthyGroup: Joi.string().default("A"),
-    class: Joi.string().default(""),
-    gender: Joi.string().required(),
-  }),
+  userName: Joi.string().required(),
 });
 
 const loginSchema = Joi.object({

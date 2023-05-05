@@ -1,4 +1,6 @@
 const { Users } = require("./userSchema");
+const { Students } = require("./students/studentsSchema");
+const {Admin} = require("./administrations/adminSchema")
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
@@ -9,13 +11,23 @@ dotenv.config();
 const { PORT = 3000, REFRESH_SECRET_KEY, BASE_URL } = process.env;
 
 const registerUser = async (req) => {
-  const { password, nickName } = req.body;
+  const { password, nickName } = req;
   const salt = await bcrypt.genSalt(10);
-    const hashPassword = await bcrypt.hash(password, salt);
+  const hashPassword = await bcrypt.hash(password, salt);
 
-    await Users.create({ ...req.body, password: hashPassword });
-    return { nickName, password}
+  const user = await Users.create({ ...req, password: hashPassword });
+  return { nickName, password, _id:user._id };
 };
+
+const registerStudents = async (req) => {
+  await Students.create({ ...req })
+  return {...req}
+}
+
+const registerAdmin = async (req) => {
+  await Admin.create({ ...req })
+  return {...req}
+}
 
 const loginUser = async (req) => {
   const { nickName, password } = req.body;
@@ -30,12 +42,11 @@ const loginUser = async (req) => {
 
   const tokens = createTokens(user._id);
   await Users.findByIdAndUpdate(user._id, { ...tokens });
-console.log(user);
+  console.log(user);
   return {
     ...tokens,
-    user: {
-      ...user.userInformation, subscription: user.subscription
-    },
+    subscription: user.subscription,
+    userName: user.userName,
   };
 };
 
@@ -53,9 +64,8 @@ const refreshUser = async (req) => {
 
     return {
       ...tokens,
-      user: {
-        ...userUpdate
-      },
+      subscription: userUpdate.subscription,
+      userName: userUpdate.userName,
     };
   }
 };
@@ -83,8 +93,10 @@ const updatePassword = async (req, res) => {
 
 module.exports = {
   registerUser,
+  registerStudents,
+  registerAdmin,
   loginUser,
   refreshUser,
   logoutUser,
-  updatePassword
+  updatePassword,
 };
