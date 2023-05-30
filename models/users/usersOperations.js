@@ -1,6 +1,6 @@
 const { Users } = require("./userSchema");
 const { Students } = require("./students/studentsSchema");
-const {Admin} = require("./administrations/adminSchema")
+const { Admin } = require("./administrations/adminSchema");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
@@ -16,18 +16,18 @@ const registerUser = async (req) => {
   const hashPassword = await bcrypt.hash(password, salt);
 
   const user = await Users.create({ ...req, password: hashPassword });
-  return { nickName, password, _id:user._id };
+  return { nickName, password, _id: user._id };
 };
 
 const registerStudents = async (req) => {
-  await Students.create({ ...req })
-  return {...req}
-}
+  await Students.create({ ...req });
+  return { ...req };
+};
 
 const registerAdmin = async (req) => {
-  await Admin.create({ ...req })
-  return {...req}
-}
+  await Admin.create({ ...req });
+  return { ...req };
+};
 
 const loginUser = async (req) => {
   const { nickName, password } = req.body;
@@ -42,11 +42,17 @@ const loginUser = async (req) => {
 
   const tokens = createTokens(user._id);
   await Users.findByIdAndUpdate(user._id, { ...tokens });
-  console.log(user);
+  let userInfo = null;
+  if (user.subscription === "admin" || "teacher") {
+    userInfo = await Admin.findOne({ owner: user._id });
+  } else {
+    userInfo = await Students.findOne({ owner: user._id });
+  }
   return {
     ...tokens,
     subscription: user.subscription,
-    userName: user.userName,
+    id: user._id,
+    user: { ...userInfo._doc },
   };
 };
 
@@ -62,10 +68,18 @@ const refreshUser = async (req) => {
 
     const userUpdate = await User.findByIdAndUpdate(id, { ...tokens });
 
+    let userInfo = null;
+    if (user.subscription === "admin" || "teacher") {
+      userInfo = await Admin.findOne({ owner: user._id });
+    } else {
+      userInfo = await Students.findOne({ owner: user._id });
+    }
+
     return {
       ...tokens,
-      subscription: userUpdate.subscription,
-      userName: userUpdate.userName,
+      subscription: user.subscription,
+      id: user._id,
+      user: { ...userInfo._doc },
     };
   }
 };

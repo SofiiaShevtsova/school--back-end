@@ -28,7 +28,7 @@ const authenticate = require("../../middlewares/authMiddlewar");
 
 const router = express.Router();
 
-router.post("/registerUser", async (req, res, next) => {
+router.post("/register", async (req, res, next) => {
   try {
     const {
       nickName,
@@ -70,6 +70,12 @@ router.post("/registerUser", async (req, res, next) => {
       if (newUser) {
         switch (subscription) {
           case "student":
+            const userParents = await registerUser({
+              nickName: `${nickName}+P`,
+              password: password,
+              userName: newUser._id,
+              subscription: "parent",
+            });
             const { error: errorStudent } = registerStudentsSchema.validate({
               ...infoForStudents,
               owner: newUser._id,
@@ -139,7 +145,7 @@ router.post("/login", async (req, res, next) => {
     next(error);
   }
 });
-
+// ------------don't finished yet-----------------------------------------
 router.get("/current", authenticate, (req, res, next) => {
   try {
     const { userInformation, subscription } = req.user;
@@ -148,6 +154,7 @@ router.get("/current", authenticate, (req, res, next) => {
     next(error);
   }
 });
+// ------------------------------------------------------------------------
 
 router.post("/refresh", async (req, res, next) => {
   try {
