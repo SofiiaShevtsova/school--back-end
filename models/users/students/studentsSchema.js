@@ -14,7 +14,7 @@ const studentsSchema = new Schema({
       enum: ["A", "B", "C"],
     required: true,
   },
-  shoolClass: {
+  schoolClass: {
     type: String,
     required: true,
   },
@@ -47,7 +47,7 @@ const registerStudentsSchema = Joi.object({
   userName: Joi.string().required(),
   birthdayDate: Joi.string().required(),
   healthGroup: Joi.string().required(),
-  shoolClass: Joi.string().required(),
+  schoolClass: Joi.string().required(),
     parents: Joi.object({
         mother: Joi.string().required(),
         father: Joi.string().required(),

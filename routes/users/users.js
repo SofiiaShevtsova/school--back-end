@@ -37,7 +37,7 @@ router.post("/register", async (req, res, next) => {
       subscription,
       birthdayDate,
       healthGroup,
-      shoolClass,
+      schoolClass,
       subjects,
       contacts,
       parents,
@@ -48,7 +48,7 @@ router.post("/register", async (req, res, next) => {
       userName,
       birthdayDate,
       healthGroup,
-      shoolClass,
+      schoolClass,
       contacts,
       parents,
     };
@@ -56,7 +56,7 @@ router.post("/register", async (req, res, next) => {
       userName,
       birthdayDate,
       healthGroup,
-      shoolClass,
+      schoolClass,
       contacts,
       subjects,
     };
@@ -71,7 +71,7 @@ router.post("/register", async (req, res, next) => {
         switch (subscription) {
           case "student":
             const userParents = await registerUser({
-              nickName: `${nickName}+P`,
+              nickName: `${nickName}P`,
               password: password,
               userName: newUser._id,
               subscription: "parent",

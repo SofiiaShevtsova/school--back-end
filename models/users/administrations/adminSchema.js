@@ -14,7 +14,7 @@ const adminSchema = new Schema({
     enum: ["A", "B", "C"],
     required: true,
   },
-  shoolClass: {
+  schoolClass: {
     type: String,
   },
   subjects: {
@@ -41,7 +41,7 @@ const registerAdminSchema = Joi.object({
   userName: Joi.string().required(),
   birthdayDate: Joi.string().required(),
   healthGroup: Joi.string().required(),
-  shoolClass: Joi.string().required(),
+  schoolClass: Joi.string().required(),
   subjects: Joi.array().items(Joi.string()),
   contacts: Joi.array().items(Joi.string()),
   owner: Joi.any(),

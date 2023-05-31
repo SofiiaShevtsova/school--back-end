@@ -43,7 +43,7 @@ const loginUser = async (req) => {
   const tokens = createTokens(user._id);
   await Users.findByIdAndUpdate(user._id, { ...tokens });
   let userInfo = null;
-  if (user.subscription === "admin" || "teacher") {
+  if (user.subscription === "admin" || user.subscription === "teacher") {
     userInfo = await Admin.findOne({ owner: user._id });
   } else {
     userInfo = await Students.findOne({ owner: user._id });
